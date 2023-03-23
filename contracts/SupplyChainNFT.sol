@@ -27,8 +27,8 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
     }
 
     mapping(uint256 => Product) public _productDetails;
-    mapping(address => bool) private _authorizedManufacturers;
-    mapping(address => bool) private _authorizedShippers;
+    mapping(address => bool) public _authorizedManufacturers;
+    mapping(address => bool) public _authorizedShippers;
     mapping(address => uint256) public rewardPoints;
 
     constructor() ERC721("MyToken", "MTK") {}
@@ -111,7 +111,7 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
             "Product is not in the Out for Delivery stage"
         );
         require(msg.sender == ownerOf(tokenId),"Not the current owner of the Product");
-        _productDetails[tokenId].stage = Stage.OutForDelivery;
+        _productDetails[tokenId].stage = Stage.Delivered;
     }
 
     function getBalance() public view returns (uint256) {
