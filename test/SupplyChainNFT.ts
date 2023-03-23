@@ -66,7 +66,7 @@ describe("MyToken", function () {
           "productMaterial",
           "productOrigin",
           "productUri",
-          { value: ethers.utils.parseEther("10") }
+          { value: ethers.utils.parseEther("0.1") }
         );
 
       const tokenId = "0"
@@ -103,13 +103,13 @@ describe("MyToken", function () {
           "productMaterial",
           "productOrigin",
           "productUri",
-          { value: ethers.utils.parseEther("10") }
+          { value: ethers.utils.parseEther("0.1") }
         );
     });
 
     it("Should set product stage to Shipped", async function () {
       const tokenId = "0"
-      await myToken.connect(shipper).shipProduct(tokenId);
+      await myToken.connect(manufacturer).shipProduct(tokenId);
 
       const product = await myToken._productDetails(tokenId);
       expect(product.stage).to.equal(1);
@@ -118,12 +118,12 @@ describe("MyToken", function () {
     it("Shipping should fail if not authorized", async function () {
       const tokenId = "0"
       const tx = myToken.connect(user).shipProduct(tokenId);
-      await expect(tx).to.be.revertedWith("Caller is not an authorized shipper");
+      await expect(tx).to.be.revertedWith("Caller is not an authorized manufacturer");
     });
 
     it("Should set product stage to OutForDelivery", async function () {
       const tokenId = "0"
-      await myToken.connect(shipper).shipProduct(tokenId);
+      await myToken.connect(manufacturer).shipProduct(tokenId);
       await myToken.connect(shipper).deliverProduct(tokenId);
 
       const product = await myToken._productDetails(tokenId);
@@ -132,14 +132,14 @@ describe("MyToken", function () {
 
     it("Delivery should fail if not authorized", async function () {
       const tokenId = "0";
-      await myToken.connect(shipper).shipProduct(tokenId);
+      await myToken.connect(manufacturer).shipProduct(tokenId);
       const tx = myToken.connect(user).deliverProduct(tokenId);
       await expect(tx).to.be.revertedWith("Caller is not an authorized shipper");
     });
 
     it("Should set product stage to Delivered", async function () {
       const tokenId = "0"
-      await myToken.connect(shipper).shipProduct(tokenId);
+      await myToken.connect(manufacturer).shipProduct(tokenId);
       await myToken.connect(shipper).deliverProduct(tokenId);
       await myToken.connect(user).confirmProductDelivery(tokenId);
 
@@ -149,7 +149,7 @@ describe("MyToken", function () {
 
     it("Delivery confirmation should fail if not authorized", async function () {
       const tokenId = "0"
-      await myToken.connect(shipper).shipProduct(tokenId);
+      await myToken.connect(manufacturer).shipProduct(tokenId);
       await myToken.connect(shipper).deliverProduct(tokenId);
       const tx = myToken.connect(shipper).confirmProductDelivery(tokenId);
       await expect(tx).to.be.revertedWith("Not the current owner of the Product");

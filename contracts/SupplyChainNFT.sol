@@ -60,7 +60,7 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
     }
 
     function safeMint(string memory name, string memory material, string memory origin, string memory uri) public payable {
-        require(msg.value == 10 ether, "Product price is not transferred to the manufacturer");
+        require(msg.value == 0.1 ether, "Product price is not transferred to the manufacturer");
         rewardPoints[msg.sender]+=(msg.value * 10)/100;
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
@@ -89,7 +89,7 @@ contract MyToken is ERC721, ERC721URIStorage, Ownable {
         return super.tokenURI(tokenId);
     }
 
-    function shipProduct(uint256 tokenId) external onlyAuthorizedShippers {
+    function shipProduct(uint256 tokenId) external onlyAuthorizedManufacturers {
         require(
             _productDetails[tokenId].stage == Stage.OrderReceived,
             "Product is not in the Manufactured stage"
